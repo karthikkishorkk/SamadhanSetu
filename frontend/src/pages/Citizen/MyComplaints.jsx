@@ -2,13 +2,7 @@ import { useEffect, useState } from "react";
 import { api, getAccessToken } from "../Auth/auth.js";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import {
-  ClipboardList,
-  CheckCircle,
-  Clock,
-  AlertTriangle,
-  Loader2,
-} from "lucide-react";
+import { ClipboardList, CheckCircle, Clock, AlertTriangle, Loader2 } from "lucide-react";
 
 export default function MyComplaints() {
   const [complaints, setComplaints] = useState([]);
@@ -17,23 +11,19 @@ export default function MyComplaints() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // ✅ Load user and fetch complaints
   useEffect(() => {
     const token = getAccessToken();
     if (!token) {
       navigate("/login");
       return;
     }
-
     try {
       const decoded = jwtDecode(token);
       setUser(decoded);
-
       api
         .get(`/complaints?userId=${decoded.id}`)
         .then((res) => {
-          const data =
-            Array.isArray(res.data) ? res.data : res.data?.complaints || [];
+          const data = Array.isArray(res.data) ? res.data : res.data?.complaints || [];
           setComplaints(data);
         })
         .catch((err) => {
@@ -48,75 +38,74 @@ export default function MyComplaints() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#C6C6D0] via-[#104C64] to-[#C0754D] p-6">
-      <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#0b3f35] via-[#134e42] to-[#1a5a4e] p-8 sm:p-6 relative overflow-hidden">
+      {/* Floating blurred circles */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-green-400 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-60 right-20 w-24 h-24 bg-green-500 rounded-full blur-2xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-40 left-1/4 w-40 h-40 bg-teal-400 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute bottom-20 right-1/3 w-28 h-28 bg-green-300 rounded-full blur-2xl animate-pulse delay-3000"></div>
+      </div>
+
+      {/* Container */}
+      <div className="max-w-5xl mx-auto bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-green-300/30 overflow-hidden relative z-10">
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#104C64] to-[#C0754D] p-6 text-white">
-          <h2 className="text-2xl font-bold flex items-center gap-3">
-            <ClipboardList className="w-6 h-6" />
-            My Complaints
-          </h2>
+        <div className="bg-gradient-to-r from-[#0b3f35] to-[#134e42] p-6 text-green-400 font-bold text-2xl flex items-center gap-3 rounded-t-3xl">
+          <ClipboardList className="w-6 h-6" />
+          My Complaints
         </div>
 
-        {/* Loading / Error States */}
+        {/* Loading State */}
         {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="w-6 h-6 text-[#104C64] animate-spin" />
-            <span className="ml-2 text-gray-700">Loading complaints...</span>
+          <div className="flex justify-center items-center py-16 text-green-700">
+            <Loader2 className="w-8 h-8 animate-spin" />
+            <span className="ml-3 text-lg">Loading complaints...</span>
           </div>
         ) : error ? (
-          <div className="p-6 text-center text-red-600">{error}</div>
+          <div className="p-6 text-center text-red-600 font-semibold">{error}</div>
         ) : (
           <>
             {/* Complaints Table */}
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead className="bg-[#C6C6D0] sticky top-0">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+              <table className="w-full text-[#0b3f35] border-separate border-spacing-y-3">
+                <thead>
+                  <tr className="bg-green-100 rounded-t-2xl">
+                    <th className="text-left px-6 py-4 rounded-l-2xl font-semibold uppercase tracking-wide text-sm">
                       Issue Description
                     </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                    <th className="text-center px-6 py-4 font-semibold uppercase tracking-wide text-sm">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                    <th className="text-center px-6 py-4 font-semibold uppercase tracking-wide text-sm">
                       Date Submitted
                     </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                    <th className="text-center px-6 py-4 rounded-r-2xl font-semibold uppercase tracking-wide text-sm">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody>
                   {complaints.length > 0 ? (
                     complaints.map((complaint, idx) => (
                       <tr
-                        key={idx}
-                        className={`transition-colors ${
-                          idx % 2 === 0 ? "bg-gray-50" : "bg-white"
-                        } hover:bg-gray-100`}
+                        key={complaint.id || idx}
+                        className={`cursor-pointer shadow-sm rounded-xl ${
+                          idx % 2 === 0 ? "bg-green-50" : "bg-white"
+                        } hover:bg-green-100 transition-colors`}
                       >
-                        {/* Description */}
-                        <td className="px-6 py-4 max-w-xs">
-                          <p
-                            className="text-sm font-medium text-gray-900 truncate"
-                            title={complaint.issue}
-                          >
-                            {complaint.issue}
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
+                        <td className="px-6 py-5 max-w-xs truncate" title={complaint.issue}>
+                          <p className="font-semibold">{complaint.issue}</p>
+                          <p className="text-xs text-green-700 mt-1">
                             ID: #{complaint.id?.toString().padStart(4, "0")}
                           </p>
                         </td>
-
-                        {/* Status */}
-                        <td className="px-6 py-4 text-center">
+                        <td className="px-6 py-5 text-center">
                           <span
                             className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
                               complaint.status === "Resolved"
                                 ? "bg-green-100 text-green-700"
                                 : complaint.status === "In Progress"
-                                ? "bg-yellow-100 text-yellow-700"
+                                ? "bg-teal-100 text-teal-700"
                                 : "bg-red-100 text-red-700"
                             }`}
                           >
@@ -132,21 +121,13 @@ export default function MyComplaints() {
                             {complaint.status}
                           </span>
                         </td>
-
-                        {/* Date */}
-                        <td className="px-6 py-4 text-center text-sm text-gray-600">
-                          {complaint.date
-                            ? new Date(complaint.date).toLocaleDateString()
-                            : "-"}
+                        <td className="px-6 py-5 text-center text-sm text-green-800 font-medium">
+                          {complaint.date ? new Date(complaint.date).toLocaleDateString() : "-"}
                         </td>
-
-                        {/* Actions */}
-                        <td className="px-6 py-4 text-center">
+                        <td className="px-6 py-5 text-center">
                           <button
-                            onClick={() =>
-                              navigate(`/complaints/${complaint.id}`)
-                            }
-                            className="text-[#104C64] hover:text-[#C0754D] text-sm font-medium underline"
+                            onClick={() => navigate(`/complaints/${complaint.id}`)}
+                            className="text-teal-600 hover:text-teal-800 font-semibold text-sm underline"
                           >
                             View Details
                           </button>
@@ -155,10 +136,7 @@ export default function MyComplaints() {
                     ))
                   ) : (
                     <tr>
-                      <td
-                        colSpan="4"
-                        className="px-6 py-8 text-center text-gray-500 italic"
-                      >
+                      <td colSpan="4" className="px-6 py-12 text-center text-green-700 italic">
                         No complaints reported yet.
                       </td>
                     </tr>
@@ -168,11 +146,8 @@ export default function MyComplaints() {
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 bg-[#C6C6D0]/40 border-t text-right">
-              <p className="text-sm text-gray-600">
-                Total Complaints:{" "}
-                <span className="font-semibold">{complaints.length}</span>
-              </p>
+            <div className="px-6 py-4 bg-green-50 border-t border-green-200/50 text-right text-green-800 font-semibold">
+              Total Complaints: {complaints.length}
             </div>
           </>
         )}

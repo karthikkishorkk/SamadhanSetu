@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Users,
+  ClipboardList,
+  Bell,
+  CheckCircle,
+  AlertTriangle,
+  Clock,
+} from "lucide-react";
 
 export default function AdminHome() {
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
-
 
   const initialComplaints = [
     {
@@ -47,13 +54,6 @@ export default function AdminHome() {
     { id: 2, citizen: "Sneha", message: "Garbage pickup needs to be more frequent." },
   ]);
 
-  const [newAnnouncement, setNewAnnouncement] = useState({
-    title: "",
-    description: "",
-    priority: "Medium",
-  });
-
-  // Sync complaints from localStorage when page regains focus
   useEffect(() => {
     const onFocus = () => {
       setComplaints((prev) =>
@@ -74,7 +74,6 @@ export default function AdminHome() {
       .catch((err) => console.error("Error fetching announcements:", err));
   }, []);
 
-
   const handleAnnouncementSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -87,11 +86,7 @@ export default function AdminHome() {
         const saved = await res.json();
         setAnnouncements([saved, ...announcements]);
         setNewAnnouncement({ title: "", description: "", priority: "Medium" });
-
-        // ✅ Show success message
         setSuccessMessage("✅ Announcement added successfully!");
-
-        // Auto-clear after 3 seconds
         setTimeout(() => setSuccessMessage(""), 3000);
       } else {
         console.error("Failed to save announcement");
@@ -101,7 +96,11 @@ export default function AdminHome() {
     }
   };
 
-
+  const [newAnnouncement, setNewAnnouncement] = useState({
+    title: "",
+    description: "",
+    priority: "Medium",
+  });
 
   const priorityColors = {
     High: "bg-red-100 text-red-700",
@@ -109,21 +108,78 @@ export default function AdminHome() {
     Low: "bg-green-100 text-green-700",
   };
 
+  const stats = [
+    {
+      label: "Total Complaints",
+      value: complaints.length,
+      icon: ClipboardList,
+      color: "blue",
+    },
+    {
+      label: "Resolved Issues",
+      value: complaints.filter((c) => c.status === "Resolved").length,
+      icon: CheckCircle,
+      // trend: "+8 this month",
+      color: "green",
+    },
+    {
+      label: "Pending Issues",
+      value: complaints.filter((c) => c.status !== "Resolved").length,
+      icon: Clock,
+      // trend: "-2 from last week",
+      color: "orange",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 p-8 sm:p-6">
-      <h1 className="text-4xl font-extrabold mb-8 text-green-900 tracking-wide">
+    <div className="min-h-screen bg-gradient-to-br from-[#0b3f35] via-[#134e42] to-[#1a5a4e] p-8 sm:p-6">
+      <h1 className="text-4xl font-extrabold mb-8 text-white tracking-wide flex items-center gap-3">
+        <Users className="w-10 h-10 text-yellow-400" />
         Officer Dashboard
       </h1>
 
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+        {stats.map((stat, idx) => (
+          <div
+            key={idx}
+            className={`bg-white/90 rounded-3xl shadow-xl p-8 transition-transform duration-500 hover:scale-105 border border-transparent hover:border-yellow-400`}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+                  {stat.label}
+                </p>
+                <p className="text-4xl font-bold text-gray-900 mt-3">{stat.value}</p>
+                {/* {stat.trend && (
+                  <p className="text-sm font-medium text-yellow-500 mt-2">{stat.trend}</p>
+                )} */}
+              </div>
+              <div
+                className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${
+                  stat.color === "blue"
+                    ? "bg-gradient-to-br from-[#0b3f35] to-[#134e42]"
+                    : stat.color === "green"
+                    ? "bg-gradient-to-br from-[#134e42] to-[#1a5a4e]"
+                    : "bg-gradient-to-br from-yellow-400 to-yellow-600"
+                }`}
+              >
+                <stat.icon className="w-8 h-8 text-white" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* Complaints Section */}
-      <section className="bg-white p-8 rounded-2xl shadow-lg mb-8 border border-green-200">
-        <h2 className="text-2xl font-semibold mb-6 text-green-800 tracking-wide">
+      <section className="bg-white/90 rounded-3xl shadow-lg p-8 mb-8 border border-yellow-400">
+        <h2 className="text-2xl font-semibold mb-6 text-yellow-600 tracking-wide">
           Complaints
         </h2>
         <div className="overflow-x-auto rounded-lg">
           <table className="w-full border-collapse text-gray-700 shadow-sm">
             <thead>
-              <tr className="bg-green-100 text-left text-green-900 font-semibold uppercase tracking-wide">
+              <tr className="bg-yellow-100 text-left text-yellow-900 font-semibold uppercase tracking-wide">
                 <th className="py-3 px-4">Citizen</th>
                 <th className="py-3 px-4">Issue</th>
                 <th className="py-3 px-4">Status</th>
@@ -133,9 +189,10 @@ export default function AdminHome() {
               {complaints.map((c) => (
                 <tr
                   key={c.id}
-                  className="border-b border-gray-200 cursor-pointer hover:bg-green-50 transition-colors duration-150"
-                  onClick={() => navigate(`/officer/complaints/${c.id}`, { state: { complaint: c } })}
-
+                  className="border-b border-gray-200 cursor-pointer hover:bg-yellow-50 transition-colors duration-150"
+                  onClick={() =>
+                    navigate(`/officer/complaints/${c.id}`, { state: { complaint: c } })
+                  }
                 >
                   <td className="py-3 px-4 font-medium">{c.citizen}</td>
                   <td className="py-3 px-4">{c.issue}</td>
@@ -162,8 +219,8 @@ export default function AdminHome() {
       </section>
 
       {/* Announcements Section */}
-      <section className="bg-white p-8 rounded-2xl shadow-lg mb-8 border border-green-200">
-        <h2 className="text-2xl font-semibold mb-6 text-green-800 tracking-wide">
+      <section className="bg-white/90 rounded-3xl shadow-lg p-8 mb-8 border border-yellow-400">
+        <h2 className="text-2xl font-semibold mb-6 text-yellow-600 tracking-wide">
           Announcements
         </h2>
         {successMessage && (
@@ -173,7 +230,7 @@ export default function AdminHome() {
         )}
         <form
           onSubmit={handleAnnouncementSubmit}
-          className="space-y-5 mb-8 border-b border-green-300 pb-6"
+          className="space-y-5 mb-8 border-b border-yellow-300 pb-6"
         >
           <input
             type="text"
@@ -182,7 +239,7 @@ export default function AdminHome() {
             onChange={(e) =>
               setNewAnnouncement({ ...newAnnouncement, title: e.target.value })
             }
-            className="w-full p-3 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-green-900 placeholder-green-600 transition"
+            className="w-full p-3 border border-yellow-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-yellow-900 placeholder-yellow-600 transition"
             required
           />
           <textarea
@@ -191,15 +248,15 @@ export default function AdminHome() {
             onChange={(e) =>
               setNewAnnouncement({ ...newAnnouncement, description: e.target.value })
             }
-            className="w-full p-3 border border-green-300 rounded-lg h-24 resize-none focus:outline-none focus:ring-2 focus:ring-green-400 text-green-900 placeholder-green-600 transition"
+            className="w-full p-3 border border-yellow-300 rounded-lg h-24 resize-none focus:outline-none focus:ring-2 focus:ring-yellow-400 text-yellow-900 placeholder-yellow-600 transition"
             required
-          ></textarea>
+          />
           <select
             value={newAnnouncement.priority}
             onChange={(e) =>
               setNewAnnouncement({ ...newAnnouncement, priority: e.target.value })
             }
-            className="w-full max-w-xs p-3 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-green-900 transition"
+            className="w-full max-w-xs p-3 border border-yellow-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-yellow-900 transition"
           >
             <option>High</option>
             <option>Medium</option>
@@ -207,7 +264,7 @@ export default function AdminHome() {
           </select>
           <button
             type="submit"
-            className="bg-green-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-500 transition"
+            className="bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-700 focus:outline-none focus:ring-4 focus:ring-yellow-500 transition"
           >
             Add Announcement
           </button>
@@ -217,13 +274,13 @@ export default function AdminHome() {
           {announcements.map((a) => (
             <div
               key={a.id}
-              className="border border-green-200 p-6 rounded-xl bg-green-50 shadow-sm hover:shadow-md transition"
+              className="border border-yellow-300 p-6 rounded-xl bg-yellow-50 shadow-sm hover:shadow-md transition"
             >
-              <h3 className="font-extrabold text-xl text-green-900 mb-1 tracking-wide">
+              <h3 className="font-extrabold text-xl text-yellow-900 mb-1 tracking-wide">
                 {a.title}
               </h3>
-              <p className="text-green-800 mb-3 leading-relaxed">{a.description}</p>
-              <div className="flex flex-wrap items-center justify-between text-sm text-green-700 font-medium">
+              <p className="text-yellow-800 mb-3 leading-relaxed">{a.description}</p>
+              <div className="flex flex-wrap items-center justify-between text-sm text-yellow-700 font-medium">
                 <span>Date: {a.date}</span>
                 <span
                   className={`inline-block px-3 py-1 rounded-full font-semibold tracking-wide ${
@@ -239,18 +296,18 @@ export default function AdminHome() {
       </section>
 
       {/* Feedback Section */}
-      <section className="bg-white p-8 rounded-2xl shadow-lg border border-green-200">
-        <h2 className="text-2xl font-semibold mb-6 text-green-800 tracking-wide">
+      <section className="bg-white/90 rounded-3xl shadow-lg p-8 border border-yellow-400">
+        <h2 className="text-2xl font-semibold mb-6 text-yellow-600 tracking-wide">
           Citizen Feedback
         </h2>
         <ul className="space-y-5">
           {feedbacks.map((f) => (
             <li
               key={f.id}
-              className="border border-green-200 p-5 rounded-xl bg-gray-50 shadow-inner hover:shadow-md transition"
+              className="border border-yellow-300 p-5 rounded-xl bg-yellow-50 shadow-inner hover:shadow-md transition"
             >
-              <p className="font-semibold text-green-900 mb-2">{f.citizen}</p>
-              <p className="text-green-800">{f.message}</p>
+              <p className="font-semibold text-yellow-900 mb-2">{f.citizen}</p>
+              <p className="text-yellow-800">{f.message}</p>
             </li>
           ))}
         </ul>

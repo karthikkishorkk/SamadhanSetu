@@ -98,14 +98,14 @@ export default function CitizenHome() {
       label: "Resolved Issues",
       value: complaints.filter((c) => c.status === "Resolved").length,
       icon: CheckCircle,
-      trend: "+8 this month",
+      // trend: "+8 this month",
       color: "green",
     },
     {
       label: "Pending Issues",
       value: complaints.filter((c) => c.status !== "Resolved").length,
       icon: Clock,
-      trend: "-2 from last week",
+      // trend: "-2 from last week",
       color: "orange",
     },
   ];
@@ -113,28 +113,39 @@ export default function CitizenHome() {
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
-        return "border-l-[#C0754D] bg-[#C0754D]/10";
+        return "border-l-[#d97706] bg-gradient-to-r from-[#d97706]/10 to-[#f59e0b]/5";
       case "medium":
-        return "border-l-[#104C64] bg-[#104C64]/10";
+        return "border-l-[#f59e0b] bg-gradient-to-r from-[#f59e0b]/10 to-[#d97706]/5";
       case "low":
-        return "border-l-[#C6C6D0] bg-[#C6C6D0]/20";
+        return "border-l-[#134e42] bg-gradient-to-r from-[#134e42]/10 to-[#0b3f35]/5";
       default:
         return "border-l-gray-500 bg-gray-50";
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#C6C6D0] via-[#104C64] to-[#C0754D]">
+    <div className="min-h-screen bg-gradient-to-br from-[#0b3f35] via-[#134e42] to-[#1a5a4e] relative overflow-hidden">
+      
+      {/* Floating Background Elements */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-orange-400 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-60 right-20 w-24 h-24 bg-orange-500 rounded-full blur-2xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-40 left-1/4 w-40 h-40 bg-teal-400 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute bottom-20 right-1/3 w-28 h-28 bg-orange-300 rounded-full blur-2xl animate-pulse delay-3000"></div>
+      </div>
+
       {/* Header Section */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="bg-gradient-to-r from-[#0b3f35] to-[#134e42] shadow-2xl border-b border-orange-300/20 relative z-10">
+        <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#104C64] to-[#C0754D] rounded-lg flex items-center justify-center">
-                  <Users className="w-6 h-6 text-white" />
+              <h1 className="text-4xl font-bold text-white flex items-center gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#f59e0b] to-[#d97706] rounded-xl flex items-center justify-center shadow-lg">
+                  <Users className="w-7 h-7 text-white" />
                 </div>
-                Welcome Back, {user?.full_name || user?.username || "Citizen"}
+                <span className="bg-gradient-to-r from-orange-200 to-orange-100 bg-clip-text text-transparent">
+                  Welcome Back, {user?.full_name || user?.username || "Citizen"}
+                </span>
               </h1>
             </div>
           </div>
@@ -142,39 +153,34 @@ export default function CitizenHome() {
       </div>
 
       {/* Main */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-10 relative z-10">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
           {stats.map((stat, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 border border-gray-100"
+              className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 hover:shadow-orange-200/20 hover:shadow-2xl transition-all duration-500 border border-orange-200/20 hover:scale-105"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm font-medium">{stat.label}</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">
+                  <p className="text-[#0b3f35] text-sm font-semibold uppercase tracking-wide">{stat.label}</p>
+                  <p className="text-4xl font-bold text-[#134e42] mt-3">
                     {stat.value}
                   </p>
+                  {/* {stat.trend && (
+                    <p className="text-[#f59e0b] text-sm font-medium mt-2">{stat.trend}</p>
+                  )} */}
                 </div>
                 <div
-                  className={`w-14 h-14 rounded-2xl flex items-center justify-center ${
+                  className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${
                     stat.color === "blue"
-                      ? "bg-[#104C64]/20"
+                      ? "bg-gradient-to-br from-[#0b3f35] to-[#134e42]"
                       : stat.color === "green"
-                      ? "bg-[#104C64]/20"
-                      : "bg-[#C0754D]/20"
+                      ? "bg-gradient-to-br from-[#134e42] to-[#1a5a4e]"
+                      : "bg-gradient-to-br from-[#f59e0b] to-[#d97706]"
                   }`}
                 >
-                  <stat.icon
-                    className={`w-7 h-7 ${
-                      stat.color === "blue"
-                        ? "text-[#104C64]"
-                        : stat.color === "green"
-                        ? "text-[#104C64]"
-                        : "text-[#C0754D]"
-                    }`}
-                  />
+                  <stat.icon className="w-8 h-8 text-white" />
                 </div>
               </div>
             </div>
@@ -184,121 +190,146 @@ export default function CitizenHome() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Announcements */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-[#104C64] to-[#C0754D] p-6 text-white">
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-orange-200/20 overflow-hidden">
+              <div className="bg-gradient-to-r from-[#0b3f35] via-[#134e42] to-[#f59e0b] p-5 text-white">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold flex items-center gap-3">
-                    <Volume2 className="w-6 h-6" />
+                  <h2 className="text-lg font-bold flex items-center gap-2">
+                    <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
+                      <Volume2 className="w-4 h-4" />
+                    </div>
                     Latest Announcements
                   </h2>
                 </div>
               </div>
-              <div className="p-6 space-y-4">
-                {announcements.map((announcement, idx) => (
-                  <div
-                    key={idx}
-                    className={`p-4 border-l-4 rounded-lg hover:shadow-md transition-all duration-200 cursor-pointer ${getPriorityColor(
-                      announcement.priority
-                    )}`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 mb-2">
-                          {announcement.title}
-                        </h3>
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            {new Date(announcement.date).toLocaleDateString()}
-                          </span>
-                          <span className="px-2 py-1 bg-[#C6C6D0] rounded-full text-xs font-medium">
-                            {announcement.category}
-                          </span>
+              <div className="p-5 space-y-4">
+                {announcements.length > 0 ? (
+                  announcements.map((announcement, idx) => (
+                    <div
+                      key={idx}
+                      className={`p-4 border-l-4 rounded-lg hover:shadow-md transition-all duration-300 cursor-pointer backdrop-blur-sm ${getPriorityColor(
+                        announcement.priority
+                      )}`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-bold text-[#0b3f35] mb-2 text-base">
+                            {announcement.title}
+                          </h3>
+                          <div className="flex items-center gap-4 text-sm text-[#134e42]">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {new Date(announcement.date).toLocaleDateString()}
+                            </span>
+                            <span className="px-2 py-1 bg-[#0b3f35]/10 rounded-full text-xs font-semibold text-[#0b3f35]">
+                              {announcement.category}
+                            </span>
+                          </div>
+                        </div>
+                        <div
+                          className={`px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
+                            announcement.priority === "high"
+                              ? "bg-gradient-to-r from-[#d97706] to-[#92400e] text-white"
+                              : announcement.priority === "medium"
+                              ? "bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-white"
+                              : "bg-gradient-to-r from-[#134e42] to-[#0b3f35] text-white"
+                          }`}
+                        >
+                          {announcement.priority}
                         </div>
                       </div>
-                      <div
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          announcement.priority === "high"
-                            ? "bg-[#C0754D]/20 text-[#C0754D]"
-                            : announcement.priority === "medium"
-                            ? "bg-[#104C64]/20 text-[#104C64]"
-                            : "bg-[#C6C6D0] text-gray-800"
-                        }`}
-                      >
-                        {announcement.priority?.toUpperCase()}
-                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <Bell className="w-12 h-12 text-[#134e42]/30 mx-auto mb-3" />
+                    <p className="text-[#0b3f35] text-base">No announcements at this time</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>
 
           {/* Quick Actions + Status */}
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-orange-200/20">
+              <h3 className="text-lg font-bold text-[#0b3f35] mb-4 flex items-center gap-2">
+                <div className="w-5 h-5 bg-gradient-to-br from-[#f59e0b] to-[#d97706] rounded-lg"></div>
                 Quick Actions
               </h3>
               <div className="space-y-3">
                 <button
                   onClick={() => navigate("/report")}
-                  className="w-full flex items-center gap-3 px-4 py-4 rounded-xl bg-gradient-to-r from-[#104C64] to-[#C0754D] text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="w-full group flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-white shadow-lg hover:shadow-orange-400/30 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
                 >
-                  <PlusCircle className="w-5 h-5" />
-                  <span className="font-medium">Report New Issue</span>
+                  <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                    <PlusCircle className="w-4 h-4" />
+                  </div>
+                  <span className="font-semibold">Report New Issue</span>
                 </button>
                 <button 
-                onClick={() => navigate("/mycomplaints")}
-                className="w-full flex items-center gap-3 px-4 py-4 rounded-xl bg-gradient-to-r from-[#104C64] to-[#C0754D] text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                  <ClipboardList className="w-5 h-5" />
-                  <span className="font-medium">My Complaints</span>
+                  onClick={() => navigate("/mycomplaints")}
+                  className="w-full group flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-[#0b3f35] to-[#134e42] text-white shadow-lg hover:shadow-teal-400/20 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                    <ClipboardList className="w-4 h-4" />
+                  </div>
+                  <span className="font-semibold">My Complaints</span>
                 </button>
                 <button 
-                onClick={() => navigate("/feedback")}
-                className="w-full flex items-center gap-3 px-4 py-4 rounded-xl bg-gradient-to-r from-[#104C64] to-[#C0754D] text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                  <FileText className="w-5 h-5" />
-                  <span className="font-medium">Submit Feedback</span>
+                  onClick={() => navigate("/feedback")}
+                  className="w-full group flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-[#134e42] to-[#1a5a4e] text-white shadow-lg hover:shadow-teal-400/20 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <span className="font-semibold">Submit Feedback</span>
                 </button>
               </div>
             </div>
 
             {/* Status Summary */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-orange-200/20">
+              <h3 className="text-lg font-bold text-[#0b3f35] mb-4 flex items-center gap-2">
+                <div className="w-5 h-5 bg-gradient-to-br from-[#f59e0b] to-[#d97706] rounded-lg"></div>
                 Issue Status
               </h3>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-[#104C64]/10 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-[#134e42]/10 to-[#0b3f35]/5 rounded-xl border border-[#134e42]/20">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-[#104C64]" />
-                    <span className="text-sm font-medium text-[#104C64]">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[#134e42] to-[#0b3f35] rounded-lg flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-base font-semibold text-[#0b3f35]">
                       Resolved
                     </span>
                   </div>
-                  <span className="text-lg font-bold text-[#104C64]">
+                  <span className="text-xl font-bold text-[#0b3f35]">
                     {complaints.filter((c) => c.status === "Resolved").length}
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-[#C6C6D0]/40 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-100 to-gray-50 rounded-xl border border-gray-200">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-gray-700" />
-                    <span className="text-sm font-medium text-gray-700">
+                    <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-500 rounded-lg flex items-center justify-center">
+                      <Clock className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-base font-semibold text-gray-700">
                       In Progress
                     </span>
                   </div>
-                  <span className="text-lg font-bold text-gray-700">
+                  <span className="text-xl font-bold text-gray-700">
                     {complaints.filter((c) => c.status === "In Progress").length}
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-[#C0754D]/10 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-[#f59e0b]/10 to-[#d97706]/5 rounded-xl border border-[#f59e0b]/20">
                   <div className="flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5 text-[#C0754D]" />
-                    <span className="text-sm font-medium text-[#C0754D]">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[#f59e0b] to-[#d97706] rounded-lg flex items-center justify-center">
+                      <AlertTriangle className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-base font-semibold text-[#d97706]">
                       Pending
                     </span>
                   </div>
-                  <span className="text-lg font-bold text-[#C0754D]">
+                  <span className="text-xl font-bold text-[#d97706]">
                     {complaints.filter((c) => c.status === "Pending").length}
                   </span>
                 </div>
@@ -308,19 +339,21 @@ export default function CitizenHome() {
         </div>
 
         {/* Complaints Table */}
-        <div className="mt-8 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-          <div className="bg-gradient-to-r from-[#104C64] to-[#C0754D] p-6 text-white">
+        <div className="mt-12 bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-orange-200/20 overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0b3f35] via-[#134e42] to-[#f59e0b] p-8 text-white">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold flex items-center gap-3">
-                <ClipboardList className="w-6 h-6" />
+              <h2 className="text-2xl font-bold flex items-center gap-3">
+                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                  <ClipboardList className="w-5 h-5" />
+                </div>
                 Recent Complaints
               </h2>
-              <div className="flex items-center gap-3">
-                <button className="flex items-center gap-2 px-3 py-2 bg-[#104C64]/60 rounded-lg text-sm">
+              <div className="flex items-center gap-4">
+                <button className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-xl text-sm font-semibold hover:bg-white/30 transition-colors">
                   <Search className="w-4 h-4" />
                   Search
                 </button>
-                <button className="flex items-center gap-2 px-3 py-2 bg-[#104C64]/60 rounded-lg text-sm">
+                <button className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-xl text-sm font-semibold hover:bg-white/30 transition-colors">
                   <Filter className="w-4 h-4" />
                   Filter
                 </button>
@@ -330,77 +363,90 @@ export default function CitizenHome() {
 
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-[#C6C6D0]">
+              <thead className="bg-gradient-to-r from-[#0b3f35]/10 to-[#f59e0b]/10">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  <th className="px-8 py-6 text-left text-sm font-bold text-[#0b3f35] uppercase tracking-wide">
                     Issue Description
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                  <th className="px-8 py-6 text-center text-sm font-bold text-[#0b3f35] uppercase tracking-wide">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                  <th className="px-8 py-6 text-center text-sm font-bold text-[#0b3f35] uppercase tracking-wide">
                     Date Submitted
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                  <th className="px-8 py-6 text-center text-sm font-bold text-[#0b3f35] uppercase tracking-wide">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
-                {complaints.map((complaint, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <p className="text-sm font-medium text-gray-900">
-                        {complaint.issue}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        ID: #{complaint.id?.toString().padStart(4, "0")}
-                      </p>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                          complaint.status === "Resolved"
-                            ? "bg-[#104C64]/20 text-[#104C64]"
-                            : complaint.status === "In Progress"
-                            ? "bg-[#C6C6D0]/40 text-gray-700"
-                            : "bg-[#C0754D]/20 text-[#C0754D]"
-                        }`}
-                      >
-                        {complaint.status === "Resolved" && (
-                          <CheckCircle className="w-3 h-3 mr-1" />
-                        )}
-                        {complaint.status === "In Progress" && (
-                          <Clock className="w-3 h-3 mr-1" />
-                        )}
-                        {complaint.status === "Pending" && (
-                          <AlertTriangle className="w-3 h-3 mr-1" />
-                        )}
-                        {complaint.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-600">
-                      {complaint.date
-                        ? new Date(complaint.date).toLocaleDateString()
-                        : "-"}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <button className="text-[#104C64] hover:text-[#C0754D] text-sm font-medium">
-                        View Details
-                      </button>
+              <tbody className="divide-y divide-orange-100">
+                {complaints.length > 0 ? (
+                  complaints.map((complaint, idx) => (
+                    <tr key={idx} className="hover:bg-gradient-to-r hover:from-[#0b3f35]/5 hover:to-[#f59e0b]/5 transition-all duration-200">
+                      <td className="px-8 py-6">
+                        <p className="text-sm font-semibold text-[#0b3f35]">
+                          {complaint.issue}
+                        </p>
+                        <p className="text-xs text-[#134e42] mt-1 font-medium">
+                          ID: #{complaint.id?.toString().padStart(4, "0")}
+                        </p>
+                      </td>
+                      <td className="px-8 py-6 text-center">
+                        <span
+                          className={`inline-flex items-center px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide ${
+                            complaint.status === "Resolved"
+                              ? "bg-gradient-to-r from-[#134e42] to-[#0b3f35] text-white"
+                              : complaint.status === "In Progress"
+                              ? "bg-gradient-to-r from-gray-400 to-gray-500 text-white"
+                              : "bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-white"
+                          }`}
+                        >
+                          {complaint.status === "Resolved" && (
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                          )}
+                          {complaint.status === "In Progress" && (
+                            <Clock className="w-3 h-3 mr-1" />
+                          )}
+                          {complaint.status === "Pending" && (
+                            <AlertTriangle className="w-3 h-3 mr-1" />
+                          )}
+                          {complaint.status}
+                        </span>
+                      </td>
+                      <td className="px-8 py-6 text-center text-sm text-[#134e42] font-medium">
+                        {complaint.date
+                          ? new Date(complaint.date).toLocaleDateString()
+                          : "-"}
+                      </td>
+                      <td className="px-8 py-6 text-center">
+                        <button className="text-[#f59e0b] hover:text-[#d97706] text-sm font-bold hover:underline transition-colors">
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="px-8 py-16 text-center">
+                      <ClipboardList className="w-16 h-16 text-[#134e42]/30 mx-auto mb-4" />
+                      <p className="text-[#0b3f35] text-lg font-medium">No complaints found</p>
+                      <p className="text-[#134e42] text-sm mt-2">Submit your first complaint to get started</p>
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
 
-          <div className="px-6 py-4 bg-[#C6C6D0]/40 border-t">
+          <div className="px-8 py-6 bg-gradient-to-r from-[#0b3f35]/5 to-[#f59e0b]/5 border-t border-orange-200/30">
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-600">
-                Showing {complaints.length} complaints
+              <p className="text-sm text-[#134e42] font-medium">
+                Showing {complaints.length} complaint{complaints.length !== 1 ? 's' : ''}
               </p>
-              <button className="text-[#104C64] hover:text-[#C0754D] text-sm font-medium">
+              <button 
+                onClick={() => navigate("/mycomplaints")}
+                className="text-[#f59e0b] hover:text-[#d97706] text-sm font-bold hover:underline transition-colors"
+              >
                 View All Complaints →
               </button>
             </div>
